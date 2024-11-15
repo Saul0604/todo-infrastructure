@@ -2,7 +2,6 @@ name: Deploy Saul Server
 
 on:
   workflow_dispatch:
-  
 
 
 env:
