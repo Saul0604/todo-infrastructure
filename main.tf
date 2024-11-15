@@ -47,11 +47,16 @@ resource "digitalocean_droplet" "saul_server_droplet" {
   provisioner "remote-exec" {
     inline = [
       "mkdir -p /proyects",
+      "mkdir -p /volumes/nginx/html",
+      "mkdir -p /volumes/nginx/certs",
+      "mkdir -p /volumes/nginx/vhostd",
       "touch /proyects/.env",
       "echo \"MYSQL_DB=${var.MYSQL_DB}\" >> /proyects/.env",
       "echo \"MYSQL_USER=${var.MYSQL_USER}\" >> /proyects/.env",
       "echo \"MYSQL_HOST=${var.MYSQL_HOST}\" >> /proyects/.env",
-      "echo \"MYSQL_PASSWORD=${var.MYSQL_PASSWORD}\" >> /proyects/.env"
+      "echo \"MYSQL_PASSWORD=${var.MYSQL_PASSWORD}\" >> /proyects/.env",
+      "echo \"DOMAIN=${var.DOMAIN}\" >> /proyects/.env",
+      "echo \"USER_EMAIL=${var.USER_EMAIL}\" >> /proyects/.env"
     ]
     connection {
       type        = "ssh"
@@ -77,27 +82,27 @@ resource "digitalocean_droplet" "saul_server_droplet" {
 
 }
 
-# resource "time_sleep" "wait_docker_install" {
-#     depends_on = [ digitalocean_droplet.saul_server_droplet ]
-#     create_duration = "130s"
-# }
+resource "time_sleep" "wait_docker_install" {
+    depends_on = [ digitalocean_droplet.saul_server_droplet ]
+    create_duration = "130s"
+}
 
-# resource "null_resource" "init_api" {
-#     depends_on = [ time_sleep.wait_docker_install ]
-#   provisioner "remote-exec" {
-#         inline = [ 
-#             "cd /proyects",
-#             "docker-compose up -d",
-#          ]
+resource "null_resource" "init_api" {
+    depends_on = [ time_sleep.wait_docker_install ]
+  provisioner "remote-exec" {
+        inline = [ 
+            "cd /proyects",
+            "docker-compose up -d",
+         ]
 
-#          connection {
-#            type = "ssh"
-#            user = "root"
-#            private_key = file("./keys/saul_server")
-#            host = digitalocean_droplet.saul_server_droplet.ipv4_address
-#          }
-#   }
-# }
+         connection {
+           type = "ssh"
+           user = "root"
+           private_key = file("./keys/saul_server")
+           host = digitalocean_droplet.saul_server_droplet.ipv4_address
+         }
+  }
+}
 
 # # resource "null_resource" "init_nginx" {
 # #     depends_on = [ time_sleep.wait_docker_install ]

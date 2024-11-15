@@ -55,6 +55,11 @@ services:
       MYSQL_DB: ${MYSQL_DB}
       MYSQL_HOST: mysql
       MYSQL_PORT: 3306
+      VIRTUAL_HOST: ${DOMAIN}
+      VIRTUAL_PATH: /
+      LETSENCRYPT_HOST: ${DOMAIN}
+      LETSENCRYPT_EMAIL: ${USER_EMAIL}
+
     depends_on:
       - mysql
   todo-app:
